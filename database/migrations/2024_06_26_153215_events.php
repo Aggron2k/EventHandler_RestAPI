@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('location');
             $table->string('image_url')->nullable();
             $table->string('type');
-            $table->enum('visibility', ['public', 'private', 'group']);
+            $table->enum('visibility', ['public', 'private']);
             $table->text('description');
             $table->foreignId('creator_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();

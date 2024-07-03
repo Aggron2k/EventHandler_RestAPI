@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HostingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,9 +27,12 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 
 
 
-Route::group(['middleware' => ['auth:sanctum']], function(){
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
 
-
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::get('/hosting', [HostingController::class, 'index'])->name('hosting');
+    Route::get('/api/hosting', [HostingController::class, 'APIindex'])->name('hosting.index');
+    Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
 });

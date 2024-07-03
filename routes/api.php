@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HostingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Event;
@@ -22,17 +23,18 @@ Route::post('/register', [AuthController::class, 'apiRegister']);
 Route::post('/login', [AuthController::class, 'apiLogin']);
 
 
-Route::group(['middleware' => ['auth:sanctum']], function(){
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'apiLogout']);
 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::post('/update-status', [HomeController::class, 'updateStatus'])->name('update-status');
 
+    Route::get('/hosting/{visibility}', [HostingController::class, 'filterByVisibility'])->name('hosting.filter');
 
-    Route::get('/events', function () {
-        return Event::all();
-    });
+    // Route::get('/events', function () {
+    //     return Event::all();
+    // });
 
-    
-    
+    Route::get('/api/hosting', [HostingController::class, 'APIindex'])->name('hosting.index');
+    Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
+
 });
