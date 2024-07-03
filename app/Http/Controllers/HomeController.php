@@ -10,7 +10,7 @@ use App\Models\Participant;
 
 class HomeController extends Controller
 {
-    
+
     /**
      * Show the application dashboard.
      *
@@ -24,35 +24,34 @@ class HomeController extends Controller
 
         $query = $request->input('query');
 
-        if ($query) {
-            $events = Event::where('visibility', 'public')
-                ->where(function ($subQuery) use ($query) {
-                    $subQuery->where('name', 'LIKE', "%{$query}%")
-                        ->orWhere('type', 'LIKE', "%{$query}%")
-                        ->orWhere('description', 'LIKE', "%{$query}%")
-                        ->orWhere('location', 'LIKE', "%{$query}%")
-                        ->orWhere('date', 'LIKE', "%{$query}%");
-                })
-                ->with([
-                    'participants' => function ($query) {
-                        $query->where('user_id', Auth::id());
-                    }
-                ])
-                ->orderBy('date', 'asc')
-                ->get();
-        } else {
-            $events = Event::where('visibility', 'public')
-                ->with([
-                    'participants' => function ($query) {
-                        $query->where('user_id', Auth::id());
-                    }
+        $eventsQuery = Event::where('visibility', 'public')
+            ->with([
+                'participants' => function ($query) {
+                    $query->where('user_id', Auth::id());
+                }
+            ])
+            ->orderBy('date', 'asc');
 
-                ])
-                ->orderBy('date', 'asc')
-                ->get();
+        if ($query) {
+            $eventsQuery->where(function ($subQuery) use ($query) {
+                $subQuery->where('name', 'LIKE', "%{$query}%")
+                    ->orWhere('type', 'LIKE', "%{$query}%")
+                    ->orWhere('description', 'LIKE', "%{$query}%")
+                    ->orWhere('location', 'LIKE', "%{$query}%")
+                    ->orWhere('date', 'LIKE', "%{$query}%");
+            });
         }
 
-        return view('home', compact('events', 'query'));
+        $events = $eventsQuery->get();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'events' => $events,
+                'query' => $query
+            ]);
+        } else {
+            return view('home', compact('events', 'query'));
+        }
     }
 
     public function updateStatus(Request $request)

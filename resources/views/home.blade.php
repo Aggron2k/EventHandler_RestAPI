@@ -46,7 +46,8 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <small class="text-muted mb-0"><i
                                                             class="fas fa-calendar-alt me-1"></i>{{ $event->date }}</small>
-                                                    <small class="text-muted mb-0"><i class="fas fa-eye me-1"></i>{{ $event->visibility }}</small>
+                                                    <small class="text-muted mb-0"><i
+                                                            class="fas fa-eye me-1"></i>{{ $event->visibility }}</small>
                                                     <small class="text-muted ms-2"><i class="fas fa-tag me-1"></i>{{ $event->type }}</small>
                                                 </div>
                                                 <hr>
@@ -88,6 +89,9 @@
             $.ajax({
                 url: "/api/update-status",
                 method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 data: {
                     event_id: eventId,
                     status: status
