@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="row d-flex justify-content-center">
-    <div class="col-md-9 mb-4 d-flex justify-content-center">
+        <div class="col-md-9 mb-4 d-flex justify-content-center">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal">
                 <i class="fa-solid fa-plus me-1"></i>Create new event
             </button>
@@ -120,9 +120,7 @@
                                             class="fas fa-pencil me-1"></i>Modify</button>
                                     <button type="button" class="btn btn-secondary"><i
                                             class="fas fa-door-open me-1"></i>Invite</button>
-
-                                    <button type="button" class="btn btn-danger"><i
-                                            class="fas fa-trash me-1"></i>Delete</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteEvent(${event.event_id})"><i class="fas fa-trash me-1"></i>Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -165,6 +163,30 @@
                 }
             })
             .catch(error => alert(error));
+    }
+
+    function deleteEvent(eventId) {
+        if (!confirm('Are you sure you want to delete this event?')) {
+            return;
+        }
+
+        fetch(`/api/hosting/delete/${eventId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Event deleted successfully');
+                    fetchEvents('all', 'allTab');
+                } else {
+                    alert('Error deleting event: ' + data.message);
+                }
+            })
+            .catch(error => alert('Error: ' + error));
     }
 
 </script>

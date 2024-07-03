@@ -67,4 +67,17 @@ class HostingController extends Controller
 
         return response()->json(['success' => true, 'event' => $event]);
     }
+
+    public function destroy($id)
+    {
+        $event = Event::where('event_id', $id)->where('creator_id', Auth::id())->first();
+
+        if (!$event) {
+            return response()->json(['success' => false, 'message' => 'Event not found or unauthorized'], 404);
+        }
+
+        $event->delete();
+
+        return response()->json(['success' => true, 'message' => 'Event deleted successfully']);
+    }
 }
