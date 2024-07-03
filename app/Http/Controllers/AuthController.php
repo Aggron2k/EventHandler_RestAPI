@@ -56,10 +56,9 @@ class AuthController extends Controller
             'email' => 'The provided credentials do not match our records.',
         ]);
     }
-
-    public function logout(Request $request)
+    public function webLogout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
@@ -110,14 +109,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function webLogout(Request $request)
-    {
-        Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-    }
+    
 
     public function apiLogout(Request $request)
     {
