@@ -3,8 +3,10 @@
 @section('content')
 <div class="container-fluid">
     <div class="row d-flex justify-content-center">
-        <div class="col-md-9 mb-4 d-flex justify-content-center">
-            <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i>Create new event</button>
+    <div class="col-md-9 mb-4 d-flex justify-content-center">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal">
+                <i class="fa-solid fa-plus me-1"></i>Create new event
+            </button>
         </div>
 
         <!-- Content -->
@@ -28,7 +30,58 @@
     </div>
 </div>
 
-
+<!-- Modal -->
+<div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createEventModalLabel">Create New Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createEventForm">
+                    <div class="mb-3">
+                        <label for="eventName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="eventName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDate" class="form-label">Date</label>
+                        <input type="datetime-local" class="form-control" id="eventDate" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventLocation" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="eventLocation" name="location" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventImageUrl" class="form-label">Image URL</label>
+                        <input type="url" class="form-control" id="eventImageUrl" name="image_url" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventType" class="form-label">Type</label>
+                        <input type="text" class="form-control" id="eventType" name="type" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventVisibility" class="form-label">Visibility</label>
+                        <select class="form-select" id="eventVisibility" name="visibility" required>
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="eventDescription" name="description" rows="3"
+                            required></textarea>
+                    </div>
+                    <input type="hidden" name="creator_id" value="{{ Auth::user()->id }}">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitEventForm()">Save Event</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     function fetchEvents(visibility, tabId) {
@@ -82,11 +135,37 @@
                 document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
                 document.getElementById(tabId).classList.add('active');
             })
-            .catch(error => console.error('Error fetching events:', error));
+            .catch(error => alert(error));
     }
 
     // Initial load
     fetchEvents('all', 'allTab');
+
+    function submitEventForm() {
+        const form = document.getElementById('createEventForm');
+        const formData = new FormData(form);
+
+        fetch('/api/hosting/store', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const createEventModal = new bootstrap.Modal(document.getElementById('createEventModal'));
+                    createEventModal.hide();
+
+                    fetchEvents('all', 'allTab');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => alert(error));
+    }
 
 </script>
 

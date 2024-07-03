@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\HostingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Event;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HostingController;
+
 
 
 /*
@@ -36,5 +37,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/api/hosting', [HostingController::class, 'APIindex'])->name('hosting.index');
     Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
+    Route::post('/hosting/store', [HostingController::class, 'store']);
 
 });

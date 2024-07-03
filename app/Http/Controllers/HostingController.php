@@ -49,4 +49,22 @@ class HostingController extends Controller
 
         return response()->json(['events' => $events]);
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:50',
+            'date' => 'required|date',
+            'location' => 'required|string|max:50',
+            'image_url' => 'required|url',
+            'type' => 'required|string|max:50',
+            'visibility' => 'required|string|in:public,private',
+            'description' => 'required|string|max:255',
+            'creator_id' => 'required|exists:users,id',
+        ]);
+
+        $event = Event::create($request->all());
+
+        return response()->json(['success' => true, 'event' => $event]);
+    }
 }
