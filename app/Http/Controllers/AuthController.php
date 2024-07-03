@@ -4,12 +4,71 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
+    // Web Authentication Methods
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $fields = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|unique:users,email',
+            'password' => 'required|string|confirmed'
+        ]);
+
+        $user = User::create([
+            'name' => $fields['name'],
+            'email' => $fields['email'],
+            'password' => bcrypt($fields['password'])
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/home')->with('success', 'Registration successful!');
+    }
+
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    public function login(Request $request)
+    {
+        $fields = $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string'
+        ]);
+
+        if (Auth::attempt(['email' => $fields['email'], 'password' => $fields['password']])) {
+            $request->session()->regenerate();
+
+            return redirect()->intended('home');
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
+
+    // API Authentication Methods
+    public function apiRegister(Request $request)
+    {
         $fields = $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
@@ -24,15 +83,14 @@ class AuthController extends Controller
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = [
+        return response()->json([
             'user' => $user,
             'token' => $token
-        ];
-
-        return response($response, 201);
+        ], 201);
     }
 
-    public function login(Request $request){
+    public function apiLogin(Request $request)
+    {
         $fields = $request->validate([
             'email' => 'required|string',
             'password' => 'required|string'
@@ -40,27 +98,31 @@ class AuthController extends Controller
 
         $user = User::where('email', $fields['email'])->first();
 
-        if(!$user || !Hash::check($fields['password'], $user->password)){
-            return response([
-                'message' => 'Bad creds'
-            ], 401);
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = [
+        return response()->json([
             'user' => $user,
             'token' => $token
-        ];
-
-        return response($response, 201);
+        ], 200);
     }
 
-    public function logout(Request $request){
-        auth()->user()->tokens()->delete();
+    public function webLogout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return [
-            'message' => 'Logged out'
-        ];
+        return redirect('/');
+    }
+
+    public function apiLogout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => 'Logged out successfully'], 200);
     }
 }
