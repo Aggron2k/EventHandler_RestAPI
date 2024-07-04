@@ -154,9 +154,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    const createEventModal = new bootstrap.Modal(document.getElementById('createEventModal'));
+                    const createEventModalElement = document.getElementById('createEventModal');
+                    const createEventModal = bootstrap.Modal.getInstance(createEventModalElement);
                     createEventModal.hide();
-
                     fetchEvents('all', 'allTab');
                 } else {
                     alert(data.message);
