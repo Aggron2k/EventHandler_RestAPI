@@ -39,4 +39,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
     Route::post('/hosting/store', [HostingController::class, 'store']);
     Route::delete('/hosting/delete/{id}', [HostingController::class, 'destroy']);
+    Route::put('/hosting/update/{id}', [HostingController::class, 'update']);
 });

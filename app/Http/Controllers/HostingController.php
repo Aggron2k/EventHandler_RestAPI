@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class HostingController extends Controller
 {
@@ -79,5 +80,27 @@ class HostingController extends Controller
         $event->delete();
 
         return response()->json(['success' => true, 'message' => 'Event deleted successfully']);
+    }
+    public function update(Request $request, $id)
+    {
+
+        Log::info($request->all());
+        $event = Event::findOrFail($id);
+
+
+
+        // Az esemény tulajdonságainak frissítése
+        $event->name = $request->input('name');
+        $event->date = $request->input('date');
+        $event->location = $request->input('location');
+        $event->image_url = $request->input('image_url');
+        $event->type = $request->input('type');
+        $event->visibility = $request->input('visibility');
+        $event->description = $request->input('description');
+        $event->creator_id = Auth::id();
+
+        $event->save();
+
+        return response()->json(['success' => true, 'message' => 'Event updated successfully']);
     }
 }

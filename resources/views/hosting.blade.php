@@ -82,6 +82,64 @@
         </div>
     </div>
 </div>
+<!-- Modify Modal -->
+<div class="modal fade" id="updateEventModal" tabindex="-1" aria-labelledby="updateEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateEventModalLabel">Modify Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateEventForm">
+                    <input type="hidden" id="eventIdInput" name="event_id">
+                    <div class="mb-3">
+                        <label for="eventNameUpdate" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="eventNameUpdate" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDateUpdate" class="form-label">Date</label>
+                        <input type="text" class="form-control" id="eventDateUpdate" name="date" required
+                            value="2024-07-03 22:44:00">
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventLocationUpdate" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="eventLocationUpdate" name="location" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventImageUrlUpdate" class="form-label">Image URL</label>
+                        <input type="url" class="form-control" id="eventImageUrlUpdate" name="image_url" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventTypeUpdate" class="form-label">Type</label>
+                        <input type="text" class="form-control" id="eventTypeUpdate" name="type" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventVisibilityUpdate" class="form-label">Visibility</label>
+                        <select class="form-select" id="eventVisibilityUpdate" name="visibility" required>
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDescriptionUpdate" class="form-label">Description</label>
+                        <textarea class="form-control" id="eventDescriptionUpdate" name="description" rows="3"
+                            required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventTypeUpdate" class="form-label">Creator</label>
+                        <input type="text" id="eventCreatorIdUpdate" name="creator_id">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitUpdateEventForm()">Update Event</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     function fetchEvents(visibility, tabId) {
@@ -116,8 +174,7 @@
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-around mt-3">
-                                    <button type="button" class="btn btn-secondary"><i
-                                            class="fas fa-pencil me-1"></i>Modify</button>
+                                    <button type="button" class="btn btn-secondary" onclick='showUpdateModal(${JSON.stringify(event)})'><i class="fas fa-pencil me-1"></i>Modify</button>
                                     <button type="button" class="btn btn-secondary"><i
                                             class="fas fa-door-open me-1"></i>Invite</button>
                                     <button type="button" class="btn btn-danger" onclick="deleteEvent(${event.event_id})"><i class="fas fa-trash me-1"></i>Delete</button>
@@ -188,6 +245,73 @@
             })
             .catch(error => alert('Error: ' + error));
     }
+    function showUpdateModal(event) {
+        document.getElementById('updateEventForm').reset();
+
+        document.getElementById('eventNameUpdate').value = event.name;
+        document.getElementById('eventDateUpdate').value = event.date;
+        document.getElementById('eventLocationUpdate').value = event.location;
+        document.getElementById('eventImageUrlUpdate').value = event.image_url;
+        document.getElementById('eventTypeUpdate').value = event.type;
+        document.getElementById('eventVisibilityUpdate').value = event.visibility;
+        document.getElementById('eventDescriptionUpdate').value = event.description;
+        document.getElementById('eventIdInput').value = event.event_id;
+        document.getElementById('eventCreatorIdUpdate').value = event.creator_id;
+
+        const updateEventModal = new bootstrap.Modal(document.getElementById('updateEventModal'));
+        updateEventModal.show();
+    }
+
+    function submitUpdateEventForm() {
+        const form = document.getElementById('updateEventForm');
+        const formData = new FormData();
+        formData.append('name', document.getElementById('eventNameUpdate').value);
+        formData.append('date', document.getElementById('eventDateUpdate').value);
+        formData.append('location', document.getElementById('eventLocationUpdate').value);
+        formData.append('image_url', document.getElementById('eventImageUrlUpdate').value);
+        formData.append('type', document.getElementById('eventTypeUpdate').value);
+        formData.append('visibility', document.getElementById('eventVisibilityUpdate').value);
+        formData.append('description', document.getElementById('eventDescriptionUpdate').value);
+        formData.append('event_id', document.getElementById('eventIdInput').value);
+        formData.append('creator_id', document.getElementById('eventCreatorIdUpdate').value);
+        const eventId = formData.get('event_id');
+        const eventName = formData.get('name');
+        const eventDate = formData.get('date');
+        const eventLocation = formData.get('location');
+        const eventImageUrl = formData.get('image_url');
+        const eventType = formData.get('type');
+        const eventVisibility = formData.get('visibility');
+        const eventDescription = formData.get('description');
+        console.log(eventId);
+        console.log(document.getElementById('eventNameUpdate').value);
+        console.log(eventDate);
+        console.log(eventLocation);
+        console.log(eventImageUrl);
+        console.log(eventType);
+        console.log(eventVisibility);
+        console.log(eventDescription);
+
+        fetch(`/api/hosting/update/${eventId}`, {
+            method: 'PUT',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const updateEventModal = bootstrap.Modal.getInstance(document.getElementById('updateEventModal'));
+                    updateEventModal.hide();
+                    fetchEvents('all', 'allTab');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => alert(error));
+    }
+
 
 </script>
 
