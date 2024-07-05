@@ -50,7 +50,7 @@
                                 <a class="nav-link" href="{{  route('hosting')  }}">Hosting</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link">Your events</a>
+                                <a class="nav-link" href="{{  route('yourevents')  }}">Your events</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link">Notifications</a>

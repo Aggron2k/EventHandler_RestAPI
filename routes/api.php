@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HostingController;
+use App\Http\Controllers\EventController;
 
 
 
@@ -40,4 +41,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/hosting/store', [HostingController::class, 'store']);
     Route::delete('/hosting/delete/{id}', [HostingController::class, 'destroy']);
     Route::put('/hosting/update/{id}', [HostingController::class, 'update']);
+
+
 });
