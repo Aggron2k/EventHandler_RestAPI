@@ -95,7 +95,7 @@
                             </li>
                             @if (Auth::user()->profile_image_url)
                                 <img src="{{ Auth::user()->profile_image_url }}" alt="Profile Image" width="32" height="32"
-                                    class="rounded-circle me-1">
+                                    class="rounded-circle me-1 mt-1">
                             @endif
                         @endguest
                     </ul>
