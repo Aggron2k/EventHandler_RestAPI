@@ -82,8 +82,9 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                             document.getElementById('logout-form').submit();">
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                                                             document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -92,8 +93,10 @@
                                     </form>
                                 </div>
                             </li>
-                            <img src="https://github.com/aggron2k.png" alt="" width="32" height="32"
-                                class="rounded-circle me-1">
+                            @if (Auth::user()->profile_image_url)
+                                <img src="{{ Auth::user()->profile_image_url }}" alt="Profile Image" width="32" height="32"
+                                    class="rounded-circle me-1">
+                            @endif
                         @endguest
                     </ul>
                 </div>

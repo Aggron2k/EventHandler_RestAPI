@@ -20,13 +20,17 @@ class AuthController extends Controller
         $fields = $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
+            'password' => 'required|string|confirmed',
+            'profile_image_url' => 'nullable|url'
         ]);
+
+        $profileImageUrl = $fields['profile_image_url'] ?? 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
 
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
+            'password' => bcrypt($fields['password']),
+            'profile_image_url' => $profileImageUrl,
         ]);
 
         Auth::login($user);
@@ -109,7 +113,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    
+
 
     public function apiLogout(Request $request)
     {

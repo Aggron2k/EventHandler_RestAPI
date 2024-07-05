@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'Horváth Krisztián',
                 'email' => 'kriszcso4@gmail.com',
                 'password' => Hash::make('password'),
+                'profile_image_url' => 'https://avatars.githubusercontent.com/u/40773753?v=4&size=64',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
