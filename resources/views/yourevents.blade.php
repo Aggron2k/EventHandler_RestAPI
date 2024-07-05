@@ -93,7 +93,19 @@
                     .then(data => {
                         if (data.success) {
                             // Az új státusz betöltése
-                            fetchEvents(status, status + 'Tab');
+                            let newTabId;
+                            switch (status) {
+                                case 'going':
+                                    newTabId = 'goingTab';
+                                    break;
+                                case 'interested':
+                                    newTabId = 'interestedTab';
+                                    break;
+                                case 'not_going':
+                                    newTabId = 'notgoingTab';
+                                    break;
+                            }
+                            fetchEvents(status, newTabId);
                         } else {
                             console.error('Error updating status:', data.message);
                         }
