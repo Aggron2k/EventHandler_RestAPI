@@ -36,7 +36,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/hosting', [HostingController::class, 'index'])->name('hosting');
     Route::get('/api/hosting', [HostingController::class, 'APIindex'])->name('hosting.index');
     Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
-    
+
     Route::get('/yourevents', [EventController::class, 'index'])->name('yourevents');
-    
 });
