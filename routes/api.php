@@ -43,5 +43,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/hosting/update/{id}', [HostingController::class, 'update']);
 
     Route::get('/yourevents', [EventController::class, 'fetchEvents']);
+    Route::post('/change-status', [EventController::class, 'changeStatus']);
 
 });

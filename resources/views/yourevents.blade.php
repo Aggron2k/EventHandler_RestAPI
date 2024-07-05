@@ -26,21 +26,21 @@
 </div>
 
 <script>
-function fetchEvents(status, tabId) {
-    // Aktív tab beállítása
-    document.querySelectorAll('.nav-link').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
+    function fetchEvents(status, tabId) {
+        // Aktív tab beállítása
+        document.querySelectorAll('.nav-link').forEach(tab => tab.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
 
-    // API hívás az események lekérdezéséhez
-    fetch(`/api/yourevents?status=${status}`)
-        .then(response => response.json())
-        .then(events => {
-            const eventsContainer = document.getElementById('eventsContainer');
-            eventsContainer.innerHTML = '';
+        // API hívás az események lekérdezéséhez
+        fetch(`/api/yourevents?status=${status}`)
+            .then(response => response.json())
+            .then(events => {
+                const eventsContainer = document.getElementById('eventsContainer');
+                eventsContainer.innerHTML = '';
 
-            events.forEach(event => {
-                const creatorName = event.creator ? event.creator.name : 'Unknown';
-                const eventCard = `
+                events.forEach(event => {
+                    const creatorName = event.creator ? event.creator.name : 'Unknown';
+                    const eventCard = `
                     <div class="col mb-4">
                         <div class="card">
                             <img src="${event.image_url}" class="card-img-top" height="300" alt="...">
@@ -67,15 +67,45 @@ function fetchEvents(status, tabId) {
                         </div>
                     </div>
                 `;
-                eventsContainer.innerHTML += eventCard;
-            });
-        })
-        .catch(error => console.error('Error fetching events:', error));
-}
+                    eventsContainer.innerHTML += eventCard;
+                });
 
-// Betöltéskor alapértelmezett státusz
-document.addEventListener('DOMContentLoaded', function() {
-    fetchEvents('going', 'goingTab');
-});
+                attachEventHandlers();
+            })
+            .catch(error => console.error('Error fetching events:', error));
+    }
+
+    function attachEventHandlers() {
+        document.querySelectorAll('.btn-status').forEach(button => {
+            button.addEventListener('click', function () {
+                const eventId = this.getAttribute('data-event-id');
+                const status = this.getAttribute('data-status');
+
+                fetch(`/api/change-status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ event_id: eventId, status: status })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Az új státusz betöltése
+                            fetchEvents(status, status + 'Tab');
+                        } else {
+                            console.error('Error updating status:', data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error updating status:', error));
+            });
+        });
+    }
+
+    // Betöltéskor alapértelmezett státusz
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchEvents('going', 'goingTab');
+    });
 </script>
 @endsection
