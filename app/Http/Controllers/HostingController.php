@@ -83,24 +83,32 @@ class HostingController extends Controller
     }
     public function update(Request $request, $id)
     {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:50',
+                'date' => 'required|date',
+                'location' => 'required|string|max:50',
+                'image_url' => 'required|url',
+                'type' => 'required|string|max:50',
+                'visibility' => 'required|string|in:public,private',
+                'description' => 'required|string|max:255',
+                'creator_id' => 'required|exists:users,id',
+            ]);
 
-        Log::info($request->all());
-        $event = Event::findOrFail($id);
+            $event = Event::where('event_id', $id)
+                ->where('creator_id', Auth::id())
+                ->first();
 
+            if (!$event) {
+                return response()->json(['success' => false, 'message' => 'Event not found or unauthorized'], 404);
+            }
 
+            $event->update($request->all());
 
-        // Az esemény tulajdonságainak frissítése
-        $event->name = $request->input('name');
-        $event->date = $request->input('date');
-        $event->location = $request->input('location');
-        $event->image_url = $request->input('image_url');
-        $event->type = $request->input('type');
-        $event->visibility = $request->input('visibility');
-        $event->description = $request->input('description');
-        $event->creator_id = Auth::id();
-
-        $event->save();
-
-        return response()->json(['success' => true, 'message' => 'Event updated successfully']);
+            return response()->json(['success' => true, 'event' => $event]);
+        } catch (\Exception $e) {
+            Log::error('Error updating event: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error updating event'], 500);
+        }
     }
 }

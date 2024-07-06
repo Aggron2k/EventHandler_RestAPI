@@ -126,11 +126,7 @@
                         <textarea class="form-control" id="eventDescriptionUpdate" name="description" rows="3"
                             required></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="eventTypeUpdate" class="form-label">Creator</label>
-                        <input type="text" id="eventCreatorIdUpdate" name="creator_id">
-                    </div>
-                    
+                    <input type="hidden" id="eventCreatorIdUpdate" name="creator_id">
                 </form>
             </div>
             <div class="modal-footer">
@@ -264,34 +260,9 @@
 
     function submitUpdateEventForm() {
         const form = document.getElementById('updateEventForm');
-        const formData = new FormData();
-        formData.append('name', document.getElementById('eventNameUpdate').value);
-        formData.append('date', document.getElementById('eventDateUpdate').value);
-        formData.append('location', document.getElementById('eventLocationUpdate').value);
-        formData.append('image_url', document.getElementById('eventImageUrlUpdate').value);
-        formData.append('type', document.getElementById('eventTypeUpdate').value);
-        formData.append('visibility', document.getElementById('eventVisibilityUpdate').value);
-        formData.append('description', document.getElementById('eventDescriptionUpdate').value);
-        formData.append('event_id', document.getElementById('eventIdInput').value);
-        formData.append('creator_id', document.getElementById('eventCreatorIdUpdate').value);
-        const eventId = formData.get('event_id');
-        const eventName = formData.get('name');
-        const eventDate = formData.get('date');
-        const eventLocation = formData.get('location');
-        const eventImageUrl = formData.get('image_url');
-        const eventType = formData.get('type');
-        const eventVisibility = formData.get('visibility');
-        const eventDescription = formData.get('description');
-        console.log(eventId);
-        console.log(document.getElementById('eventNameUpdate').value);
-        console.log(eventDate);
-        console.log(eventLocation);
-        console.log(eventImageUrl);
-        console.log(eventType);
-        console.log(eventVisibility);
-        console.log(eventDescription);
+        const formData = new FormData(form);
 
-        fetch(`/api/hosting/update/${eventId}`, {
+        fetch(`/api/hosting/update/${formData.get('event_id')}`, {
             method: 'PUT',
             body: formData,
             headers: {
@@ -302,14 +273,19 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    const updateEventModal = bootstrap.Modal.getInstance(document.getElementById('updateEventModal'));
+                    const updateEventModalElement = document.getElementById('updateEventModal');
+                    const updateEventModal = bootstrap.Modal.getInstance(updateEventModalElement);
                     updateEventModal.hide();
                     fetchEvents('all', 'allTab');
                 } else {
-                    alert(data.message);
+                    console.error('Error updating event:', data.message);
+                    alert('Error updating event: ' + data.message);
                 }
             })
-            .catch(error => alert(error));
+            .catch(error => {
+                console.error('Error updating event:', error);
+                alert('Error updating event: ' + error);
+            });
     }
 
 
