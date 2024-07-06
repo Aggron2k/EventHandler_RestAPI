@@ -19,14 +19,17 @@ class InviteController extends Controller
     public function sendInvite(Request $request)
     {
         $validatedData = $request->validate([
-            'event_id' => 'required|integer', 
-            'user_id' => 'required|integer|exists:users,id', 
+            'event_id' => 'required|integer',
+            'user_id' => 'required|integer|exists:users,id',
         ]);
+
+        $invitingUser = $request->user();
 
         $participant = Participant::create([
             'event_id' => $validatedData['event_id'],
             'user_id' => $validatedData['user_id'],
-            'status' => 'invited', 
+            'invited_by_user_id' => $invitingUser->id,
+            'status' => 'invited',
         ]);
 
         if ($participant) {
@@ -38,7 +41,7 @@ class InviteController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error sending invitation'
-            ], 500); 
+            ], 500);
         }
     }
 }

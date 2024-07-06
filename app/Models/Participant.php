@@ -14,6 +14,7 @@ class Participant extends Model
     protected $fillable = [
         'event_id',
         'user_id',
+        'invited_by_user_id',
         'status',
     ];
 
@@ -25,5 +26,10 @@ class Participant extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function invitedByUser()
+    {
+        return $this->belongsTo(User::class, 'invited_by_user_id');
     }
 }
