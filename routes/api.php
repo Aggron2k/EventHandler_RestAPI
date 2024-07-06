@@ -39,6 +39,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/change-status', [EventController::class, 'changeStatus']);
 
     Route::get('/users', [InviteController::class, 'getUsers']);
-    Route::post('/invite', [InviteController::class, 'invite'])->name('invite');
+    Route::post('/invite', [InviteController::class, 'sendInvite']);
 
 });

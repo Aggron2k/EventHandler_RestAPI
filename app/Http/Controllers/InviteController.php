@@ -16,37 +16,29 @@ class InviteController extends Controller
         return response()->json(['success' => true, 'users' => $users]);
     }
 
-    public function invite(Request $request)
+    public function sendInvite(Request $request)
     {
-        // Get input from the request
-        $event_id = $request->input('event_id');
-        $email = $request->input('email');
-
-        // Find the event by ID
-        $event = Event::find($event_id);
-        if (!$event) {
-            return response()->json(['success' => false, 'message' => 'Event not found'], 404);
-        }
-
-        // Find the user by email
-        $user = User::where('email', $email)->first();
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found'], 404);
-        }
-
-        // Check if the user is already invited
-        $participant = Participant::where('event_id', $event_id)->where('user_id', $user->id)->first();
-        if ($participant) {
-            return response()->json(['success' => false, 'message' => 'User already invited'], 400);
-        }
-
-        // Create the participant entry
-        Participant::create([
-            'event_id' => $event_id,
-            'user_id' => $user->id,
-            'status' => 'invited',
+        $validatedData = $request->validate([
+            'event_id' => 'required|integer', 
+            'user_id' => 'required|integer|exists:users,id', 
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Invitation sent successfully']);
+        $participant = Participant::create([
+            'event_id' => $validatedData['event_id'],
+            'user_id' => $validatedData['user_id'],
+            'status' => 'invited', 
+        ]);
+
+        if ($participant) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Invitation sent successfully'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error sending invitation'
+            ], 500); 
+        }
     }
 }
