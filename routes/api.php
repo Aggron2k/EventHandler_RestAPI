@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HostingController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\InviteController;
 
 
 
@@ -30,19 +31,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/update-status', [HomeController::class, 'updateStatus'])->name('update-status');
 
-    Route::get('/hosting/{visibility}', [HostingController::class, 'filterByVisibility'])->name('hosting.filter');
-
-    // Route::get('/events', function () {
-    //     return Event::all();
-    // });
-
-    Route::get('/api/hosting', [HostingController::class, 'APIindex'])->name('hosting.index');
-    Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
     Route::post('/hosting/store', [HostingController::class, 'store']);
     Route::delete('/hosting/delete/{id}', [HostingController::class, 'destroy']);
     Route::put('/hosting/update/{id}', [HostingController::class, 'update']);
 
     Route::get('/yourevents', [EventController::class, 'fetchEvents']);
     Route::post('/change-status', [EventController::class, 'changeStatus']);
+
+    Route::get('/users', [InviteController::class, 'getUsers']);
+    Route::post('/invite', [InviteController::class, 'invite'])->name('invite');
 
 });

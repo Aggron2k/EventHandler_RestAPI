@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HostingController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\InviteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,3 +40,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/yourevents', [EventController::class, 'index'])->name('yourevents');
 });
+

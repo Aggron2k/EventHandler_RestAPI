@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->enum('status', ['going', 'interested', 'not_going'])->nullable();
+            $table->enum('status', ['going', 'interested', 'not_going', 'invited'])->nullable();
             $table->timestamps();
         });
     }
