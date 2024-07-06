@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HostingController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\InviteController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,5 +39,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
 
     Route::get('/yourevents', [EventController::class, 'index'])->name('yourevents');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+
 });
 
