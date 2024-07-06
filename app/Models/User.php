@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Participant::class);
     }
+
+    public function invitedParticipants()
+    {
+        return $this->hasMany(Participant::class, 'invited_by_user_id');
+    }
 }
