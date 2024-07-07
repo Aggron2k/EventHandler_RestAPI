@@ -53,7 +53,7 @@
                                 <a class="nav-link" href="{{  route('yourevents')  }}">Your events</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('notifications') }}">Notifications</a>
+                                <a class="nav-link" href="{{ route('notifications.index') }}">Notifications</a>
                             </li>
                         @endauth
                     </ul>

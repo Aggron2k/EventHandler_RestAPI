@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HostingController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\NotificationController;
 
 
 
@@ -40,5 +41,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/users', [InviteController::class, 'getUsers']);
     Route::post('/invite', [InviteController::class, 'sendInvite']);
+
+    Route::post('/events/{event}/respond', [NotificationController::class, 'respond'])->name('api.events.respond');
 
 });

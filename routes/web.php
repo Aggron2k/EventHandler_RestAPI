@@ -40,7 +40,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/yourevents', [EventController::class, 'index'])->name('yourevents');
 
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
 
 });
 
