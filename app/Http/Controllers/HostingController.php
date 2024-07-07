@@ -19,17 +19,6 @@ class HostingController extends Controller
         return view('hosting', compact('events'));
     }
 
-    public function filterByVisibility($visibility)
-    {
-        $events = Event::where('visibility', $visibility)
-            ->where('creator_id', Auth::id())
-            ->with('creator')
-            ->orderBy('date', 'asc')
-            ->get();
-
-        return view('hosting', compact('events'));
-    }
-
     public function APIindex()
     {
         $events = Event::with('creator')
@@ -110,5 +99,12 @@ class HostingController extends Controller
             Log::error('Error updating event: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error updating event'], 500);
         }
+    }
+    public function edit($eventId)
+    {
+        // Esemény szerkesztési oldal betöltése, például:
+        $event = Event::findOrFail($eventId); // Például az Event modell alapján keresünk eseményt az ID alapján
+
+        return view('events.edit', compact('event'));
     }
 }

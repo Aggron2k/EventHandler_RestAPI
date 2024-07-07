@@ -37,10 +37,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/hosting', [HostingController::class, 'index'])->name('hosting');
     Route::get('/api/hosting', [HostingController::class, 'APIindex'])->name('hosting.index');
     Route::get('/api/hosting/{visibility}', [HostingController::class, 'APIfilterByVisibility'])->name('hosting.filter');
+    Route::get('/events/{eventId}/edit', [HostingController::class, 'edit'])->name('events.edit');
+
 
     Route::get('/yourevents', [EventController::class, 'index'])->name('yourevents');
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
+
 
 
 });
