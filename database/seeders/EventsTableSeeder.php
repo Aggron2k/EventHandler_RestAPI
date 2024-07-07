@@ -106,7 +106,7 @@ class EventsTableSeeder extends Seeder
                 'type' => 'bootcamp',
                 'visibility' => 'private',
                 'description' => 'A bootcamp to learn Angular programming. Join us to learn the basics of Angular, build interactive web applications, and get hands-on experience with Angular programming. The bootcamp is suitable for beginners and intermediate developers.',
-                'creator_id' => 1,
+                'creator_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
