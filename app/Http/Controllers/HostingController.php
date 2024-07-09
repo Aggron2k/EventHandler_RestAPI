@@ -102,9 +102,10 @@ class HostingController extends Controller
     }
     public function edit($eventId)
     {
-        // Esemény szerkesztési oldal betöltése, például:
-        $event = Event::findOrFail($eventId); // Például az Event modell alapján keresünk eseményt az ID alapján
+        $event = Event::findOrFail($eventId);
 
-        return view('events.edit', compact('event'));
+        return view('edit', compact('event'));
     }
+
+    
 }

@@ -34,7 +34,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/hosting/store', [HostingController::class, 'store']);
     Route::delete('/hosting/delete/{id}', [HostingController::class, 'destroy']);
-    Route::put('/hosting/update/{id}', [HostingController::class, 'update']);
 
     Route::get('/yourevents', [EventController::class, 'fetchEvents']);
     Route::post('/change-status', [EventController::class, 'changeStatus']);
@@ -43,5 +42,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/invite', [InviteController::class, 'sendInvite']);
 
     Route::post('/events/{event}/respond', [NotificationController::class, 'respond'])->name('api.events.respond');
+
+    Route::put('/events/edit/{eventId}', [HostingController::class, 'update']);
 
 });
