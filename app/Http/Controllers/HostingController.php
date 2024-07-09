@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class HostingController extends Controller
 {
@@ -31,6 +31,14 @@ class HostingController extends Controller
 
     public function APIfilterByVisibility($visibility)
     {
+        $validator = Validator::make(['visibility' => $visibility], [
+            'visibility' => 'required|string|in:public,private',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+        }
+
         $events = Event::where('visibility', $visibility)
             ->where('creator_id', Auth::id())
             ->with('creator')
@@ -42,7 +50,7 @@ class HostingController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'date' => 'required|date',
             'location' => 'required|string|max:50',
@@ -52,6 +60,10 @@ class HostingController extends Controller
             'description' => 'required|string|max:255',
             'creator_id' => 'required|exists:users,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+        }
 
         $event = Event::create($request->all());
 
@@ -72,31 +84,33 @@ class HostingController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:50',
+            'date' => 'required|date',
+            'location' => 'required|string|max:50',
+            'image_url' => 'required|url',
+            'type' => 'required|string|max:50',
+            'visibility' => 'required|string|in:public,private',
+            'description' => 'required|string|max:255',
+            'creator_id' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+        }
+
+        $event = Event::where('event_id', $id)
+            ->where('creator_id', Auth::id())
+            ->first();
+
+        if (!$event) {
+            return response()->json(['success' => false, 'message' => 'Event not found or unauthorized'], 404);
+        }
+
         try {
-            $request->validate([
-                'name' => 'required|string|max:50',
-                'date' => 'required|date',
-                'location' => 'required|string|max:50',
-                'image_url' => 'required|url',
-                'type' => 'required|string|max:50',
-                'visibility' => 'required|string|in:public,private',
-                'description' => 'required|string|max:255',
-                'creator_id' => 'required|exists:users,id',
-            ]);
-
-            $event = Event::where('event_id', $id)
-                ->where('creator_id', Auth::id())
-                ->first();
-
-            if (!$event) {
-                return response()->json(['success' => false, 'message' => 'Event not found or unauthorized'], 404);
-            }
-
             $event->update($request->all());
-
             return response()->json(['success' => true, 'event' => $event]);
         } catch (\Exception $e) {
-            Log::error('Error updating event: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error updating event'], 500);
         }
     }
@@ -107,5 +121,5 @@ class HostingController extends Controller
         return view('edit', compact('event'));
     }
 
-    
+
 }

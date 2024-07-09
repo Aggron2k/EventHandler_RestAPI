@@ -17,13 +17,20 @@ class EventController extends Controller
 
     public function fetchEvents(Request $request)
     {
-        $status = $request->query('status');
+        $validator = Validator::make($request->all(), [
+            'status' => 'in:going,interested,not_going',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+        }
 
         if (!Auth::check()) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
 
         $userId = Auth::id();
+        $status = $request->query('status');
 
         $events = Event::with([
             'creator',

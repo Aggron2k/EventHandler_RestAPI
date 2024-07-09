@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Event;
 use App\Models\User;
 use App\Models\Participant;
+use Illuminate\Support\Facades\Validator;
 
 class InviteController extends Controller
 {
@@ -18,19 +18,23 @@ class InviteController extends Controller
 
     public function sendInvite(Request $request)
     {
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'event_id' => 'required|integer',
             'user_id' => 'required|integer|exists:users,id',
         ]);
 
-        $invitingUser = $request->user();
-        $eventId = $validatedData['event_id'];
-        $userId = $validatedData['user_id'];
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+        }
 
-        if (Participant::existsForEventAndUser($eventId, $userId)) {
+        $invitingUser = $request->user();
+        $eventId = $request->input('event_id');
+        $userId = $request->input('user_id');
+
+        if (Participant::where('event_id', $eventId)->where('user_id', $userId)->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'This user is reacted for this event'
+                'message' => 'This user has already reacted to this event'
             ], 400);
         }
 

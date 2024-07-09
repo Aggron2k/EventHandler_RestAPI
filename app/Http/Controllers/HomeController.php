@@ -18,9 +18,13 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'query' => 'nullable|string|max:255'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+        }
 
         $query = $request->input('query');
 

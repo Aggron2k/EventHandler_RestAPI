@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -17,19 +18,23 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $fields = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed',
+            'email' => 'required|string|email|unique:users,email',
+            'password' => 'required|string|confirmed|min:8',
             'profile_image_url' => 'nullable|url'
         ]);
 
-        $profileImageUrl = $fields['profile_image_url'] ?? 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $profileImageUrl = $request->input('profile_image_url', 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg');
 
         $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password']),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
             'profile_image_url' => $profileImageUrl,
         ]);
 
@@ -45,12 +50,18 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $fields = $request->validate([
-            'email' => 'required|string',
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email',
             'password' => 'required|string'
         ]);
 
-        if (Auth::attempt(['email' => $fields['email'], 'password' => $fields['password']])) {
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             return redirect()->intended('home');
@@ -70,18 +81,23 @@ class AuthController extends Controller
     }
 
     // API Authentication Methods
+    // Ezek a részek a Postmanben való teszteléshez szükségesek (apiLogin)
     public function apiRegister(Request $request)
     {
-        $fields = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed'
         ]);
 
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password'))
         ]);
 
         $token = $user->createToken('myapptoken')->plainTextToken;
@@ -94,14 +110,18 @@ class AuthController extends Controller
 
     public function apiLogin(Request $request)
     {
-        $fields = $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|string',
             'password' => 'required|string'
         ]);
 
-        $user = User::where('email', $fields['email'])->first();
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
 
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
+        $user = User::where('email', $request->input('email'))->first();
+
+        if (!$user || !Hash::check($request->input('password'), $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
