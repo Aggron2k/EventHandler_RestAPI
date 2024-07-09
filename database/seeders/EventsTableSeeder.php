@@ -94,7 +94,7 @@ class EventsTableSeeder extends Seeder
                 'type' => 'meetup',
                 'visibility' => 'private',
                 'description' => 'A meetup for React developers. Join us to network with other developers, share your projects, and learn about the latest features in React. The meetup will include talks, workshops, and networking opportunities.',
-                'creator_id' => 1,
+                'creator_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

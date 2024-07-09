@@ -27,11 +27,9 @@
 
 <script>
     function fetchEvents(status, tabId) {
-        // Aktív tab beállítása
         document.querySelectorAll('.nav-link').forEach(tab => tab.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
 
-        // API hívás az események lekérdezéséhez
         fetch(`/api/yourevents?status=${status}`)
             .then(response => response.json())
             .then(events => {
@@ -72,7 +70,7 @@
 
                 attachEventHandlers();
             })
-            .catch(error => console.error('Error fetching events:', error));
+            .catch(error => alert('Error fetching events:', error));
     }
 
     function attachEventHandlers() {
@@ -107,15 +105,14 @@
                             }
                             fetchEvents(status, newTabId);
                         } else {
-                            console.error('Error updating status:', data.message);
+                            alert('Error updating status:', data.message);
                         }
                     })
-                    .catch(error => console.error('Error updating status:', error));
+                    .catch(error => alert('Error updating status:', error));
             });
         });
     }
 
-    // Betöltéskor alapértelmezett státusz
     document.addEventListener('DOMContentLoaded', function () {
         fetchEvents('going', 'goingTab');
     });

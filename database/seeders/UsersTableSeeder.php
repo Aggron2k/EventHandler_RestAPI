@@ -18,10 +18,10 @@ class UsersTableSeeder extends Seeder
     {
         DB::table('users')->insert([
             [
-                'name' => 'Horváth Krisztián',
-                'email' => 'kriszcso4@gmail.com',
+                'name' => 'Kis Cica',
+                'email' => 'kiscica@gmail.com',
                 'password' => Hash::make('password'),
-                'profile_image_url' => 'https://avatars.githubusercontent.com/u/40773753?v=4&size=64',
+                'profile_image_url' => 'https://cdn.pixabay.com/photo/2020/06/02/06/17/kitten-5249584_960_720.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

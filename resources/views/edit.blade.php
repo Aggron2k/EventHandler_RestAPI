@@ -46,22 +46,21 @@
 
 <script>
     function updateEvent() {
-        var eventId = '{{ $event->event_id }}'; // Biztosítsd, hogy az event_id helyesen van beállítva
-        var creatorId = '{{ $event->creator_id }}'; // Hozzáadjuk a creator_id-t
+        let eventId = '{{ $event->event_id }}';
+        let creatorId = '{{ $event->creator_id }}';
 
-        var formData = new FormData(document.getElementById('editEventForm'));
-        formData.append('creator_id', creatorId); // Hozzáadjuk a creator_id-t a FormData-hoz
+        let formData = new FormData(document.getElementById('editEventForm'));
+        formData.append('creator_id', creatorId);
 
-        // Konzolra kiírjuk az elküldött adatokat JSON formátumban
+        
         let formDataObject = {};
 
-        // Iterálj végig a FormData kulcs-érték párokon és helyezd el őket az objektumban
+        
         formData.forEach((value, key) => {
             formDataObject[key] = value;
         });
 
-        // Ellenőrizd az objektum tartalmát a konzolon
-        console.log(formDataObject);
+        
 
         fetch('{{ url("/api/events/edit") }}/' + eventId, {
             method: 'PUT',
@@ -77,7 +76,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data); // Kiíratjuk a választ a konzolra
 
                 if (data.success) {
                     alert('Event updated successfully');
@@ -86,7 +84,6 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
                 alert('Error updating event');
             });
     }

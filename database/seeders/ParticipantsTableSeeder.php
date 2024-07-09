@@ -15,14 +15,6 @@ class ParticipantsTableSeeder extends Seeder
     {
         DB::table('participants')->insert([
             [
-                'event_id' => 1,
-                'user_id' => 1,
-                'status' => 'going',
-                'invited_by_user_id' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'event_id' => 2,
                 'user_id' => 1,
                 'status' => 'interested',
@@ -85,7 +77,16 @@ class ParticipantsTableSeeder extends Seeder
                 'status' => 'invited',
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'event_id' => 7,
+                'user_id' => 1,
+                'invited_by_user_id' => 3,
+                'status' => 'invited',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
+
         ]);
     }
 }

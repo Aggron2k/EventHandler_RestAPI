@@ -242,7 +242,6 @@
                 }
             })
             .catch(error => {
-                console.error('Error fetching users:', error);
                 alert('Error fetching users: ' + error.message);
             });
     }
@@ -271,7 +270,6 @@
                 }
             })
             .catch(error => {
-                console.error('Error sending invitation:', error);
                 alert('Error sending invitation: ' + error.message);
             });
     }

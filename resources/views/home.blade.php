@@ -78,7 +78,6 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
         $('.btn-status').on('click', function () {
@@ -102,7 +101,7 @@
                             .addClass(status === 'going' ? 'btn-success' : (status === 'interested' ? 'btn-warning' : 'btn-danger'));
 
                         button.siblings().each(function () {
-                            var siblingStatus = $(this).data('status');
+                            let siblingStatus = $(this).data('status');
                             $(this).removeClass('btn-success btn-warning btn-danger')
                                 .addClass(siblingStatus === 'going' ? 'btn-outline-success' : (siblingStatus === 'interested' ? 'btn-outline-warning' : 'btn-outline-danger'));
                         });
