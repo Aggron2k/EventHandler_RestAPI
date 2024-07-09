@@ -24,10 +24,19 @@ class InviteController extends Controller
         ]);
 
         $invitingUser = $request->user();
+        $eventId = $validatedData['event_id'];
+        $userId = $validatedData['user_id'];
+
+        if (Participant::existsForEventAndUser($eventId, $userId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This user is reacted for this event'
+            ], 400);
+        }
 
         $participant = Participant::create([
-            'event_id' => $validatedData['event_id'],
-            'user_id' => $validatedData['user_id'],
+            'event_id' => $eventId,
+            'user_id' => $userId,
             'invited_by_user_id' => $invitingUser->id,
             'status' => 'invited',
         ]);
